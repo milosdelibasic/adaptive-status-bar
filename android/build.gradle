@@ -1,0 +1,19 @@
+apply plugin: "com.android.library"
+apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "com.facebook.react"
+
+react {
+    jsRootDir = file("../src")
+    libraryName = "SkyvistAdaptiveStatusBarSpec"
+    codegenJavaPackageName = "com.skyvist.adaptivestatusbar"
+}
+android {
+    namespace "com.skyvist.adaptivestatusbar"
+    compileSdk rootProject.ext.compileSdkVersion
+    defaultConfig { minSdk rootProject.ext.minSdkVersion }
+}
+dependencies {
+    implementation("com.facebook.react:react-android")
+    implementation("androidx.core:core-ktx:1.16.0")
+    testImplementation("junit:junit:4.13.2")
+}

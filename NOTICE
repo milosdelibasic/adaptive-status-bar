@@ -1,0 +1,8 @@
+Based on @rbayuokt/expo-adaptive-status-bar 0.1.2 by rbayuokt.
+Upstream: https://github.com/rbayuokt/expo-adaptive-status-bar
+Upstream commit: 151fdc6b8c9ff172a95fab6ece65c6814c19d9bd
+Original copyright and MIT license: LICENSE.
+
+Changes by Skyvist: React Native TurboModule adapters instead of Expo Modules,
+UIViewController-based iOS appearance, Android React Native Modal window tracking,
+stale PixelCopy callback protection, validation and packaging for standalone use.

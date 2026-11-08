@@ -1,0 +1,31 @@
+name: Library checks
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  javascript:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npm test
+      - run: npm run typecheck
+      - run: npm pack --dry-run
+  swift-core:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v6
+      - run: sh scripts/test-ios-core.sh
+  kotlin-core:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 17
+      - run: sh scripts/test-android-core.sh

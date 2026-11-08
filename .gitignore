@@ -1,0 +1,8 @@
+node_modules/
+**/build/
+**/.gradle/
+**/.cxx/
+*.tgz
+.DS_Store
+coverage/
+**/.kotlin/
