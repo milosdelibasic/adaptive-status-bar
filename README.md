@@ -13,6 +13,8 @@ npm install --save-exact @skyvist/adaptive-status-bar@0.1.5
 cd ios && pod install
 ```
 
+Build iOS with Xcode 26 or newer (iOS 26 SDK); the deployment target remains iOS 15.1. The sampler includes typed support for iOS 26 Liquid Glass.
+
 Rebuild your native apps. The package ships TypeScript source for Metro and native source for React Native autolinking/codegen. It has no install/prepare script and does not need its development dependencies when used by an app.
 
 ### Swift Package Manager (React Native preview)
