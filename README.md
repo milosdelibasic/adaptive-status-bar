@@ -6,8 +6,6 @@ Adapted from [rbayuokt/expo-adaptive-status-bar](https://github.com/rbayuokt/exp
 
 ## Installation
 
-Version 0.1.5 is prepared for public npm publication; registry publication is pending maintainer authentication. The npm command below applies after publication. Until then, use the public GitHub commit archive pinned to a full commit SHA.
-
 ```sh
 npm install --save-exact @skyvist/adaptive-status-bar@0.1.5
 cd ios && pod install
