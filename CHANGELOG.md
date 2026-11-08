@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.2
+
+- Use the official Gradle setup action and cache for standalone Android CI; avoid duplicate CI runs for release tags.
+- Native runtime and JavaScript API remain unchanged.
+
 ## 0.1.1
 
 - Download the standalone Kotlin test runner from Gradle’s direct distribution host, verify its SHA-256 checksum, and allow slower initial downloads.
