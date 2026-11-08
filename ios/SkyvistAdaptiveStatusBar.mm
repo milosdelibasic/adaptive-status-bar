@@ -1,13 +1,27 @@
 #import "SkyvistAdaptiveStatusBar.h"
+#if SKYVIST_SPM
+#import "SPM/SkyvistAdaptiveStatusBarImplementation.h"
+#else
 #import "SkyvistAdaptiveStatusBar-Swift.h"
+#endif
 
 @implementation SkyvistAdaptiveStatusBar {
+#if SKYVIST_SPM
+  id<SkyvistAdaptiveStatusBarImplementation> _implementation;
+#else
   AdaptiveStatusBarBridge *_implementation;
+#endif
 }
 RCT_EXPORT_MODULE(SkyvistAdaptiveStatusBar)
 
 - (instancetype)init {
-  if (self = [super init]) { _implementation = [AdaptiveStatusBarBridge new]; }
+  if (self = [super init]) {
+#if SKYVIST_SPM
+    _implementation = SkyvistCreateStatusBarImplementation();
+#else
+    _implementation = [AdaptiveStatusBarBridge new];
+#endif
+  }
   return self;
 }
 + (BOOL)requiresMainQueueSetup { return NO; }

@@ -23,6 +23,16 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - run: sh scripts/test-ios-core.sh
+  swiftpm-consumer:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: tests/spm/package-lock.json
+      - run: npm run test:spm
   kotlin-core:
     runs-on: ubuntu-latest
     steps:

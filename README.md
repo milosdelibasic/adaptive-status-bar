@@ -6,21 +6,35 @@ Adapted from [rbayuokt/expo-adaptive-status-bar](https://github.com/rbayuokt/exp
 
 ## Installation
 
-Download a tagged release or install this repository at a full commit SHA. For reproducible CI builds, use an HTTPS commit archive in package.json and commit package-lock.json:
+Version 0.1.5 is prepared for public npm publication; registry publication is pending maintainer authentication. The npm command below applies after publication. Until then, use the public GitHub commit archive pinned to a full commit SHA.
 
-```json
-{
-  "dependencies": {
-    "@skyvist/adaptive-status-bar": "https://codeload.github.com/milosdelibasic/adaptive-status-bar/tar.gz/<FULL_COMMIT_SHA>"
-  }
-}
+```sh
+npm install --save-exact @skyvist/adaptive-status-bar@0.1.5
+cd ios && pod install
 ```
 
-Run `npm install`, then `cd ios && pod install`, and rebuild your native apps. The package ships TypeScript source for Metro and native source for React Native autolinking/codegen. It has no install/prepare script and does not need its development dependencies when used by an app.
+Rebuild your native apps. The package ships TypeScript source for Metro and native source for React Native autolinking/codegen. It has no install/prepare script and does not need its development dependencies when used by an app.
+
+### Swift Package Manager (React Native preview)
+
+The package includes a hand-authored `Package.swift` and `swiftpmConfig`. It separates the Swift implementation from the Objective-C++ TurboModule adapter, while keeping `import SkyvistAdaptiveStatusBar` and the JavaScript API the same on both installation paths.
+
+Use an app already configured for React Native's SwiftPM preview (verified with RN 0.88.1), install this package through npm, then run:
+
+```sh
+cd ios
+npx react-native spm
+```
+
+React Native's setup generates the app-local React headers and codegen packages and autolinks this manifest. It must also run on fresh CI checkouts before Xcode builds. The package uses the default generated directory layout. React Native's preview does **not** support resolving a complete RN module directly from a remote GitHub SPM URL: the JavaScript package and app-specific codegen are still required. See the official [SwiftPM setup](https://github.com/react/react-native/blob/v0.88.1/packages/react-native/scripts/spm/__docs__/spm-scripts.md) and [hand-authored package contract](https://github.com/react/react-native/blob/main/packages/react-native/scripts/spm/__docs__/spm-header-paths-contract.md).
+
+CocoaPods remains the supported default, including for RN 0.86. Adding this dependency does not convert an app to SPM. Do not manage React Native through both CocoaPods and SPM in the same app.
 
 ### Xcode Cloud
 
-A public HTTPS archive requires no GitHub token, SSH key or Git submodule. Use `npm ci` in `ci_post_clone.sh` before `pod install`. The full commit SHA and lockfile integrity pin the dependency; a new commit in this repository does not automatically change consuming builds. Verify updates in an app build before changing the pinned SHA.
+Commit the exact npm version, `package-lock.json` and `Podfile.lock`. Run `npm ci` in `ci_post_clone.sh` before `pod install`. Public npm installs require no npm login or GitHub token. A new library release does not change builds pinned to `0.1.5`.
+
+For SPM preview consumers, run React Native's SPM setup on each fresh checkout instead of the React Native CocoaPods installation. Keep the framework version selected by the app; this library never pins or downloads its own copy of React Native.
 
 ## Usage
 
@@ -71,9 +85,10 @@ npm test
 npm run typecheck
 npm run test:ios      # macOS with Xcode
 npm run test:android  # JDK 17; Gradle wrapper included
+npm run test:spm      # macOS/Xcode; separate RN 0.88.1 Debug + Release consumer
 npm pack --dry-run
 ```
 
-JavaScript tests cover configuration, API behavior and override stacks. Swift and Kotlin suites each cover 24 contrast, hysteresis and scheduling cases. The package has been integrated and tested in a React Native 0.86 app on iOS 27 and Android 14. See VALIDATION.md for the initial integration evidence. Other React Native versions have not been verified.
+JavaScript tests cover configuration, API behavior and override stacks. Swift and Kotlin suites each cover 24 contrast, hysteresis and scheduling cases. The package has been integrated and tested in a React Native 0.86 app on iOS 27 and Android 14. See VALIDATION.md for the initial integration evidence. The SwiftPM preview is verified separately with RN 0.88.1.
 
 A test consumer should exercise dark/light image replacement, animated scrolling, repeated changes, React Native Modal windows and recovery after modal dismissal. `getStats()` reports both the sampled decision and the system-reported icon appearance.

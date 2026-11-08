@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.source = { :git => package['repository']['url'], :tag => "v#{s.version}" }
   s.platforms = { :ios => min_ios_version_supported }
   s.source_files = 'ios/**/*.{h,m,mm,swift}'
-  s.exclude_files = 'ios/Tests/**/*'
+  s.exclude_files = 'ios/Tests/**/*', 'ios/SPM/**/*'
   s.private_header_files = 'ios/SkyvistAdaptiveStatusBar.h'
   s.swift_version = '5.0'
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES' }

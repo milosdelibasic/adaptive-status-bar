@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.5
+
+- Add Swift Package Manager support for React Native’s preview through separate Swift and Objective-C++ targets.
+- Keep CocoaPods and Android integration compatible with the existing RN 0.86 app.
+- Prepare public npm distribution under `@skyvist/adaptive-status-bar` with exact semantic versions.
+
 ## 0.1.3
 
 - Resolve standalone test tooling through Maven Central’s direct repository endpoint before its alternate host.
