@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.3
+
+- Resolve standalone test tooling through Maven Central’s direct repository endpoint before its alternate host.
+- Native runtime and JavaScript API remain unchanged.
+
 ## 0.1.2
 
 - Use the official Gradle setup action and cache for standalone Android CI; avoid duplicate CI runs for release tags.
