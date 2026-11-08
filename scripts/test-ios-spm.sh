@@ -5,10 +5,10 @@ WORK="$(mktemp -d)"
 trap 'rm -rf "$WORK"' EXIT
 mkdir -p "$WORK/consumer"
 cp "$ROOT/tests/spm/package.json" "$ROOT/tests/spm/package-lock.json" "$WORK/consumer/"
-npm ci --prefix "$WORK/consumer" --no-audit --no-fund
+(cd "$WORK/consumer" && npm ci --no-audit --no-fund --ignore-scripts)
 npm pack "$ROOT" --ignore-scripts --pack-destination "$WORK" --json > "$WORK/pack.json"
 ARCHIVE="$(node -e 'process.stdout.write(require(process.argv[1])[0].filename)' "$WORK/pack.json")"
-npm install --prefix "$WORK/consumer" "$WORK/$ARCHIVE" --save-exact --no-audit --no-fund --ignore-scripts --offline
+(cd "$WORK/consumer" && npm install "$WORK/$ARCHIVE" --save-exact --no-audit --no-fund --ignore-scripts --offline)
 node "$ROOT/tests/spm/prepare.mjs" "$WORK/consumer"
 cd "$WORK/consumer/ios"
 node ../node_modules/react-native/scripts/setup-apple-spm.js add --deintegrate --yes
