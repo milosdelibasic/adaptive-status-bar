@@ -29,6 +29,9 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: android-actions/setup-android@v3
+        with:
+          # The action defaults to the removed legacy "tools" package.
+          packages: platform-tools
       - uses: gradle/actions/setup-gradle@v6
       - name: Install build SDK
         run: sdkmanager 'platforms;android-37.0' 'build-tools;37.0.0' 'ndk;27.1.12297006' 'cmake;3.22.1'
@@ -59,3 +62,4 @@ jobs:
           name: android-api-${{ matrix.api }}
           path: .android-integration/results
           if-no-files-found: warn
+          include-hidden-files: true

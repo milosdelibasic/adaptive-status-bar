@@ -17,7 +17,7 @@
 - Port the 16 Skyvist image, scroll, modal and override-recovery checks into the consumer.
 - Add 14 API 24–25 fallback checks, including default theme, explicit style, hints, overrides and modal recovery.
 - Verify landscape, portrait and background/foreground recovery through app-observed events and native appearance checks.
-- Add an API 24/25/35/36 GitHub Actions matrix with screenshots, XML, logcat and JSON artifacts. The hosted workflow has not run yet.
+- Add an API 24/25/35/36 GitHub Actions matrix with screenshots, XML, logcat and JSON artifacts. Hosted results are tracked in VALIDATION.md.
 
 ### Documentation
 

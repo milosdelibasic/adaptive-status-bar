@@ -26,7 +26,7 @@ Tested the modified library as an **npm-packed dependency** of the standalone Re
 ### Scope and remaining checks
 
 - **Physical Android device: not run.** No physical Android phone was connected. OEM-specific behavior and real-device performance remain unverified.
-- **Hosted GitHub Actions: not run.** The new API 24/25/35/36 workflow has been prepared; consult its hosted run for the published commit. Local ARM64 success does not establish the hosted x86_64 runner result.
+- **Hosted GitHub Actions: validation in progress.** The first run stopped during SDK setup because an action requested the removed legacy `tools` package. The workflow now explicitly installs `platform-tools`; consult the hosted run for the final release commit. Local ARM64 success does not establish the hosted x86_64 runner result.
 - **Production signing/store bundle: not run.** This is a release-mode test consumer, not a signed Skyvist production release.
 - **Current Skyvist integration:** the published 0.1.5 library passed its existing 16 checks in a freshly built RN 0.88.1 Skyvist Debug app on API 34 before these changes. The new changes were tested in the isolated consumer; Skyvist source, dependencies and iOS work were left unchanged.
 - **iOS/SwiftPM/Expo:** not revalidated in this Android task. Historical iOS evidence is retained below; no Expo compatibility claim is made.
