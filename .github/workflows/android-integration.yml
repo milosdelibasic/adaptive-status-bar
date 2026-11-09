@@ -49,12 +49,7 @@ jobs:
           arch: x86_64
           target: google_apis
           disable-animations: false
-          script: |
-            set -eu
-            for variant in debug release; do
-              adb install -r "$ANDROID_INTEGRATION_WORK/consumer/android/app/build/outputs/apk/$variant/app-$variant.apk"
-              python3 tests/android/run-device.py --serial emulator-5554 --output "$ANDROID_INTEGRATION_WORK/results/$variant"
-            done
+          script: sh tests/android/run-variants.sh "$ANDROID_INTEGRATION_WORK" emulator-5554
       - name: Upload test evidence
         if: always()
         uses: actions/upload-artifact@v6

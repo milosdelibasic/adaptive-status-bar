@@ -14,10 +14,7 @@ if [ -n "${ANDROID_HOME:-}" ]; then printf 'sdk.dir=%s\n' "$ANDROID_HOME" > "$CO
 (cd "$CONSUMER/android" && ./gradlew :app:assembleDebug :app:assembleRelease -PreactNativeArchitectures="${ANDROID_TEST_ABI:-x86_64}" --console=plain)
 printf 'Built self-contained test APKs in %s\n' "$CONSUMER/android/app/build/outputs/apk"
 if [ -n "${ANDROID_SERIAL:-}" ]; then
-  for variant in debug release; do
-    adb -s "$ANDROID_SERIAL" install -r "$CONSUMER/android/app/build/outputs/apk/$variant/app-$variant.apk"
-    python3 "$ROOT/tests/android/run-device.py" --serial "$ANDROID_SERIAL" --output "$WORK/results/$variant"
-  done
+  sh "$ROOT/tests/android/run-variants.sh" "$WORK" "$ANDROID_SERIAL"
 else
   echo 'Build-only: ANDROID_SERIAL unset; no runtime tests were run.'
 fi
