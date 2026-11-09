@@ -7,3 +7,7 @@ node_modules/
 coverage/
 **/.kotlin/
 **/.build/
+
+# Android integration fixture output
+.android-integration/
+**/__pycache__/

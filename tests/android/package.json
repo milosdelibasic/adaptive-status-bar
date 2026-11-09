@@ -1,0 +1,14 @@
+{
+  "name": "skyvist-adaptive-status-bar-android-consumer",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@react-native-community/cli": "20.2.0",
+    "@react-native-community/template": "0.88.1",
+    "@react-native/babel-preset": "0.88.1",
+    "@react-native/metro-config": "0.88.1",
+    "react": "19.3.0",
+    "react-native": "0.88.1",
+    "@react-native-community/cli-platform-android": "20.2.0"
+  }
+}

@@ -4,7 +4,7 @@ export type IconStyle = 'light' | 'dark';
 /**
  * - `automatic`: pixel sampling decides, hints are ignored.
  * - `hybrid`: a screen's hint is used while it is set, sampling covers everything else. Default.
- * - `manual`: no sampling at all. Only hints, overrides and `fallbackStyle` apply.
+ * - `manual`: no sampling at all. Hints, overrides and fallback appearance apply.
  */
 export type DetectionStrategy = 'automatic' | 'hybrid' | 'manual';
 
@@ -45,7 +45,12 @@ export type AdaptiveStatusBarConfig = {
   minTransitionInterval?: number;
   /** Crossfade the icons on iOS. Android switches instantly either way. Default `true`. */
   animation?: boolean;
-  /** Style used when nothing else decides, e.g. manual mode with no hint. Default: leave the status bar alone. */
+  /**
+   * Style used when nothing else decides, e.g. manual mode with no hint.
+   * On Android API 24–25, omission uses the active window's Android UI mode:
+   * white icons in night mode, dark icons otherwise. Set this explicitly for custom JS themes.
+   * On iOS and Android API 26+, omission leaves the status bar alone until another source decides.
+   */
   fallbackStyle?: IconStyle;
   ios?: {
     /**
@@ -67,11 +72,18 @@ export type StyleChangeEvent = {
 
 /** Diagnostics. Counters are cumulative since the module loaded or the last `resetStats()`. */
 export type AdaptiveStatusBarStats = {
-  /** False when the platform can't sample or can't set the style. */
+  /**
+   * Whether the platform supports automatic sampling and appearance control.
+   * False on Android API 24–25,
+   * where fallback, hints and overrides can still control icon appearance.
+   */
   supported: boolean;
   enabled: boolean;
   paused: boolean;
-  /** True while the activity listener is installed (sampling is possible). */
+  /**
+   * True while automatic sampling activity listeners are installed; not a capture-in-flight flag.
+   * False on Android API 24–25 even while draw/focus listeners maintain fallback appearance.
+   */
   sampling: boolean;
   style: IconStyle | null;
   /** Icon appearance reported by the active system status bar. */

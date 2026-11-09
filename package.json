@@ -1,6 +1,6 @@
 {
   "name": "@skyvist/adaptive-status-bar",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Native adaptive status bar for React Native, without Expo.",
   "main": "src/index.ts",
   "react-native": "src/index.ts",
@@ -46,13 +46,16 @@
     "SkyvistAdaptiveStatusBar.podspec",
     "LICENSE",
     "NOTICE",
-    "README.md"
+    "README.md",
+    "CHANGELOG.md",
+    "VALIDATION.md"
   ],
   "scripts": {
     "test": "jest --runInBand --watchman=false",
     "typecheck": "tsc --noEmit",
     "test:ios": "sh scripts/test-ios-core.sh",
     "test:android": "sh scripts/test-android-core.sh",
+    "test:android:integration": "sh scripts/test-android-integration.sh",
     "test:spm": "sh scripts/test-ios-spm.sh"
   },
   "devDependencies": {

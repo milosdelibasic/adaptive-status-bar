@@ -1,6 +1,7 @@
 package com.skyvist.adaptivestatusbar
 
 import android.app.Activity
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Rect
 import android.os.Build
@@ -23,6 +24,7 @@ import com.skyvist.adaptivestatusbar.core.Measurement
 import com.skyvist.adaptivestatusbar.core.SamplingConfig
 import com.skyvist.adaptivestatusbar.core.SamplingScheduler
 import com.skyvist.adaptivestatusbar.core.StyleDecider
+import com.skyvist.adaptivestatusbar.core.resolveUnsupportedFallback
 import java.lang.ref.WeakReference
 
 enum class Strategy { AUTOMATIC, HYBRID, MANUAL }
@@ -31,7 +33,7 @@ data class ControllerConfig(
   val strategy: Strategy = Strategy.HYBRID,
   val sampling: SamplingConfig = SamplingConfig(),
   val decider: DeciderConfig = DeciderConfig(),
-  /** Used when nothing else decides: manual mode with no hint, or sampling unsupported. */
+  /** Explicit last-resort style. API 24–25 defaults to the Android UI-mode appearance when absent. */
   val fallback: IconStyle? = null,
 )
 
@@ -63,7 +65,8 @@ class AdaptiveStatusBarController(
   private var listening = false
   private val observedViews = mutableListOf<View>()
   private val focusListener = ViewTreeObserver.OnWindowFocusChangeListener {
-    scheduler.onInteraction(SystemClock.uptimeMillis())?.let(::schedule)
+    if (!supported) scheduleUnsupportedAppearance()
+    else scheduler.onInteraction(SystemClock.uptimeMillis())?.let(::schedule)
   }
 
   private fun activeWindow(): Window? = activityRef.get()?.let(windowForActivity)
@@ -86,10 +89,17 @@ class AdaptiveStatusBarController(
 
   private val drawListener = ViewTreeObserver.OnDrawListener {
     stats.activitySignals++
-    scheduler.onActivity(SystemClock.uptimeMillis())?.let(::schedule)
+    if (!supported) scheduleUnsupportedAppearance()
+    else scheduler.onActivity(SystemClock.uptimeMillis())?.let(::schedule)
   }
 
   private val tick = Runnable { sample() }
+  private val fallbackRefresh = Runnable {
+    if (enabled && !paused) {
+      startListening()
+      applyResolved()
+    }
+  }
 
   // This guard survives pause/restart: an earlier GPU copy must finish before another starts.
   private var copyInFlight = false
@@ -133,7 +143,7 @@ class AdaptiveStatusBarController(
     config = next
     scheduler.config = next.sampling
     decider.config = next.decider
-    if (!enabled) return
+    if (!enabled || paused) return
     if (strategyChanged) restart() else applyResolved()
   }
 
@@ -167,6 +177,10 @@ class AdaptiveStatusBarController(
   private fun start() {
     if (activityRef.get() == null) return
     applyResolved()
+    if (!supported) {
+      startListening()
+      return
+    }
     if (!needsSampling()) return
     if (worker == null) {
       worker = HandlerThread("AdaptiveStatusBar").also { it.start() }
@@ -176,10 +190,19 @@ class AdaptiveStatusBarController(
     schedule(0)
   }
 
+  // No timer or bitmap on API 24–25: refresh on window draws/focus and lifecycle resume.
+  private fun scheduleUnsupportedAppearance() {
+    if (!enabled || paused) return
+    // Defer observer changes until after OnDraw has finished.
+    main.removeCallbacks(fallbackRefresh)
+    main.post(fallbackRefresh)
+  }
+
   private fun stop() {
     generation++
     stopListening()
     main.removeCallbacks(tick)
+    main.removeCallbacks(fallbackRefresh)
     scheduler.reset()
     decider.reset()
   }
@@ -295,6 +318,13 @@ class AdaptiveStatusBarController(
     override?.let { return it to "override" }
     if (config.strategy != Strategy.AUTOMATIC) hint?.let { return it to "hint" }
     if (config.strategy != Strategy.MANUAL) decider.style?.let { return it to "sample" }
+    if (!supported) {
+      val mode = activeWindow()?.decorView?.resources?.configuration?.uiMode
+        ?: activityRef.get()?.resources?.configuration?.uiMode
+      val night = mode != null &&
+        (mode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
+      return resolveUnsupportedFallback(config.fallback, night) to "fallback"
+    }
     return config.fallback to "fallback"
   }
 
@@ -325,7 +355,7 @@ class AdaptiveStatusBarController(
     "supported" to supported,
     "enabled" to enabled,
     "paused" to paused,
-    "sampling" to listening,
+    "sampling" to (supported && listening),
     "style" to applied?.label,
     "observedStyle" to activeWindow()?.let { window ->
       window.peekDecorView()?.let { decor ->
