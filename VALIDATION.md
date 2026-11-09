@@ -1,11 +1,65 @@
 # Verification
 
-## Unreleased Expo integration, 2026-11-09
+## 0.2.0 review and measured improvements, 2026-11-09
+
+The release combines the Android and Expo work below with a focused code review.
+Version 0.1.6 was not published; 0.2.0 publication is pending npm authentication.
+
+### Measured changes
+
+- Android analyzer: three fresh Android ART processes on an API 36 ARM64 emulator
+  measured median 0.945/0.980/0.951 µs before versus 0.565/0.567/0.567 µs after.
+  This is 40–42% less CPU time for the isolated analyzer, not total sampling,
+  PixelCopy, application frame time or battery usage. Retained table storage
+  increases by 2 KiB. All 16,777,216 RGB values and 1,792 complete randomized
+  strips remain bit-identical. See [benchmark method and results](android/benchmarks/README.md).
+- iOS: 100 ignored automatic-mode hints previously caused 100 observer
+  reattachments; now zero. The latest stored hint still applies after switching
+  to hybrid mode or clearing an override.
+- iOS paused configure regression: one unwanted appearance write before, zero
+  after. Already-queued paused timer callback: one unwanted capture before,
+  zero after. Actual controller bodies are executed through a UIKit seam;
+  these operation counts are not application performance measurements.
+- Swift weighted RGB table candidate was rejected. Two paired benchmark batches
+  showed inconsistent approximately ±2% differences. The production Swift
+  analyzer remains unchanged. See [the experiment](tests/performance/ios-luminance/README.md).
+- JavaScript: all 13 newly tested malformed configurations failed the expected
+  validation behavior before the fix. They now throw RangeError before native
+  dispatch. Six more configure regressions verify invalid updates preserve state.
+  The complete JavaScript suite passes 46 tests; TypeScript and 5 plugin tests pass.
+- Swift core passes 24 tests, plus executable appearance and controller regression
+  harnesses. The controller harness is included in Library CI checks.
+
+### Final native regression
+
+- Final 0.2.0 Expo Android API 35/36 × genuine Debug development client and
+  production-mode Release/R8: all four runs passed 16 assertions plus rotation
+  and background/resume. Kotlin core passed 30 tests.
+- The fixture-only native hint probe passed 14 assertions on both API 35 and 36.
+  The baseline failed because an ignored automatic hint invalidated an actual
+  in-flight PixelCopy generation. The fixed controller retains the copy,
+  listeners and worker, accepts the result, and preserves latest-hint behavior
+  after strategy changes or clearing an override. This probe is manual fixture
+  coverage, not yet part of hosted CI.
+- Final Expo iOS Debug and Release were rebuilt and exercised after lifecycle
+  fixes: adaptation, override recovery, modal/resume and development reload all
+  passed with zero capture failures and false external-write counts.
+- Final SwiftPM RN 0.88.1 consumer passed Debug simulator and unsigned Release
+  iOS builds. JavaScript, plugin, Swift core, appearance/controller harnesses,
+  type checking and package dry-run passed on the final source.
+- Independent focused patch review found no blocking correctness regression.
+  This was not a whole-library security audit.
+- Hosted CI for the combined 0.2.0 source is pending the next push. No
+  physical-device or app-wide performance claim is made.
+
+---
+
+## Expo integration baseline `f3d10de`, 2026-11-09
 
 Tested an npm-packed feature build with Expo 58.0.23, React Native 0.88.1,
 React 19.3.0 and expo-dev-client 58.0.18. This is a native development/prebuild
-integration, not Expo Go. The version field remains 0.1.6 during development;
-the prepared 0.1.6 release baseline does not contain these Expo changes.
+integration, not Expo Go. This baseline used a development archive labeled 0.1.6;
+it was never published. The combined release is now prepared as 0.2.0.
 
 ### Build and regression checks
 

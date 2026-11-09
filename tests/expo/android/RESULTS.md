@@ -1,5 +1,38 @@
 # Expo Android validation: 2026-11-09
 
+## 0.2.0 optimization regression rerun
+
+The final packed 0.2.0 Android and TypeScript implementation was installed and
+rebuilt after the weighted-luminance and ignored-hint fixes. The installed native
+and JS implementation files were compared to the library checkout and match.
+Both Debug and Release/R8 builds succeeded.
+
+- API 35 Debug development client: **16/16 + lifecycle PASS**.
+- API 35 Release: **16/16 + lifecycle PASS**.
+- API 36 Debug development client: **16/16 + lifecycle PASS**.
+- API 36 Release: **16/16 + lifecycle PASS**.
+- Native ignored-hint probe: **14/14 on API 35 and API 36**. A baseline run
+  reproduced `HINT_PROBE_FAIL:2:ignored hint invalidated in-flight generation`.
+  The fixed controller retains the real PixelCopy request and observer/worker
+  state, accepts its result, preserves hints for a later strategy change and
+  preserves the latest masked hint for clearing an override.
+- Kotlin suite: **30 tests**, including exact parity for every 24-bit RGB value
+  and 1,792 randomized complete strips.
+
+All four final UI results were verified with exact result selectors, including
+`id="lifecycle-result" label="PASS"`, not screenshot inference. Initial Debug
+startup attempts stalled before the fixture ran with Metro bundle-stream errors.
+The isolated test server was restarted with Watchman access and launch/retry
+handling was corrected; final runs passed without changing library behavior.
+
+Debug APK SHA-256: `09ee8b3bb207917fc72925fd0b9f257ea47774fd0df8736e36c1f8c5440c8e71`.
+Release APK SHA-256: `a2f96b70342a424efbec1f06b53dc2beaa320208a2aea42b0e196972744c6c35`.
+
+Raw final snapshots, native probe evidence, build logs and benchmark logs are in
+`/tmp/asb-android-benchmark/`. The reproducible CPU benchmark, full timing rounds
+and scope limitations are in [android/benchmarks](../../../android/benchmarks/README.md).
+No physical-device, frame-rate or battery-life improvement is claimed.
+
 ## Tested stack
 
 - Expo 58.0.23, expo-dev-client 58.0.18, React Native 0.88.1, React 19.3.0.

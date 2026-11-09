@@ -45,3 +45,25 @@ The generated debug keystore is for isolated local testing only.
 The original ADB runner in `tests/android/run-device.py` is for the self-contained
 bare-RN fixture and hard-codes its package name. Do not run it unchanged against
 this consumer or treat its results as Expo evidence.
+
+## Ignored-hint native regression (API 26+, Debug only)
+
+The optional probe uses its own Activity and real `AdaptiveStatusBarController`,
+not a mocked state machine. It starts a real PixelCopy request, verifies ignored
+hints preserve its generation/worker/listener state and that its result is
+accepted, then verifies stored hints after switching to hybrid, masked hints
+under an override, and restoration of the latest hint after clearing the override.
+It uses private-field reflection for assertions and must run in Debug, not R8.
+
+```sh
+node tests/expo/android/install-hint-probe.mjs /tmp/asb-expo-android-new
+cd /tmp/asb-expo-android-new/android
+./gradlew :app:assembleDebug -PreactNativeArchitectures=arm64-v8a
+```
+
+Install the Debug APK using Mobile Dev and open
+`com.skyvist.asbexpoandroid/.HintLifecycleProbeActivity` on the selected emulator.
+Verify exact visible text `HINT_PROBE_PASS:14`. This Activity is fixture-only and
+excluded from the library npm package. Reapply the helper after clean prebuild.
+The pre-fix controller failed at assertion 3 with
+`HINT_PROBE_FAIL:2:ignored hint invalidated in-flight generation` on API 36.

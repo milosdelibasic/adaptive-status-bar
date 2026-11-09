@@ -27,10 +27,40 @@ const checkNumber = (
   }
 };
 
+/** Shared shape checks run before configure() merges partial options. */
+export const validateConfigShape = (config: AdaptiveStatusBarConfig): void => {
+  if (config === null || typeof config !== 'object' || Array.isArray(config)) {
+    fail('config must be an object');
+  }
+  if (config.animation !== undefined && typeof config.animation !== 'boolean') {
+    fail('animation must be a boolean');
+  }
+  if (
+    config.ios !== undefined &&
+    (config.ios === null ||
+      typeof config.ios !== 'object' ||
+      Array.isArray(config.ios))
+  ) {
+    fail('ios must be an object');
+  }
+  if (
+    config.hysteresis !== undefined &&
+    typeof config.hysteresis !== 'boolean' &&
+    (config.hysteresis === null ||
+      typeof config.hysteresis !== 'object' ||
+      Array.isArray(config.hysteresis))
+  ) {
+    fail('hysteresis must be a boolean or a thresholds object');
+  }
+
+};
+
 /** Validates the config and flattens it for native. Throws a RangeError on bad input. */
 export const toNativeConfig = (
   config: AdaptiveStatusBarConfig,
 ): NativeConfig => {
+  validateConfigShape(config);
+
   const {
     strategy = 'hybrid',
     performance = 'balanced',
@@ -86,6 +116,12 @@ export const toNativeConfig = (
 
   let thresholds: { darkThreshold?: number; lightThreshold?: number } = {};
   if (typeof hysteresis === 'object') {
+    if (
+      typeof hysteresis.darkThreshold !== 'number' ||
+      typeof hysteresis.lightThreshold !== 'number'
+    ) {
+      fail('hysteresis requires numeric darkThreshold and lightThreshold');
+    }
     checkNumber('hysteresis.darkThreshold', hysteresis.darkThreshold, 0, 1);
     checkNumber('hysteresis.lightThreshold', hysteresis.lightThreshold, 0, 1);
     if (hysteresis.darkThreshold > hysteresis.lightThreshold) {

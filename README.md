@@ -4,7 +4,7 @@ Keep status-bar icons readable as images, screens and scroll positions change. A
 
 Built for React Native's **New Architecture**. No Expo runtime or Expo Modules dependency.
 
-> **New in 0.1.6:** theme-based Android 7 fallback and Android integration CI. See [release notes](CHANGELOG.md#016---2026-11-09) and [verification results](VALIDATION.md).
+> **Prepared for 0.2.0:** Expo SDK 58 native support, theme-based Android 7 fallback and Android integration CI. Publication is pending. See [release notes](CHANGELOG.md#020---unreleased) and [verification results](VALIDATION.md).
 
 ## Contents
 
@@ -36,10 +36,10 @@ Your application's React Native version and build tools may impose higher platfo
 
 ## Install
 
-Install the published package and commit your lockfile:
+After 0.2.0 is published, install the package and commit your lockfile. Until then, use a local npm-packed archive from this branch:
 
 ```sh
-npm install --save-exact @skyvist/adaptive-status-bar@0.1.6
+npm install --save-exact @skyvist/adaptive-status-bar@0.2.0
 ```
 
 ### Android
@@ -194,7 +194,7 @@ AdaptiveStatusBar.clearOverride();
 
 ## Android 7 fallback
 
-**Since 0.1.6:** on API 24–25, the controller uses an explicit `fallbackStyle`, or derives an initial/default style from the Android window's UI mode:
+**New in 0.2.0:** on API 24–25, the controller uses an explicit `fallbackStyle`, or derives an initial/default style from the Android window's UI mode:
 
 - Light UI mode → dark icons.
 - Night UI mode → white icons.

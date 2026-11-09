@@ -1,4 +1,4 @@
-import { toNativeConfig } from './config';
+import { toNativeConfig, validateConfigShape } from './config';
 import Native from './specs/NativeSkyvistAdaptiveStatusBar';
 import { StyleStack } from './StyleStack';
 import type {
@@ -25,6 +25,7 @@ export const AdaptiveStatusBar = {
     Native.disable();
   },
   configure: (options: AdaptiveStatusBarConfig): void => {
+    validateConfigShape(options);
     const next = {
       ...config,
       ...options,

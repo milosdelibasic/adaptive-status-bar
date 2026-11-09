@@ -26,3 +26,19 @@ test {
     exceptionFormat 'full'
   }
 }
+
+// Opt-in CPU microbenchmark; not part of the normal test suite or npm payload.
+sourceSets {
+  benchmark.kotlin.srcDirs = ['../benchmarks']
+  benchmark.compileClasspath += sourceSets.main.output
+  benchmark.runtimeClasspath += sourceSets.main.output
+  test.kotlin.srcDirs += ['../benchmarks/reference']
+}
+configurations {
+  benchmarkImplementation.extendsFrom implementation
+  benchmarkRuntimeOnly.extendsFrom runtimeOnly
+}
+tasks.register('benchmarkLuminance', JavaExec) {
+  classpath = sourceSets.benchmark.runtimeClasspath
+  mainClass = 'com.skyvist.adaptivestatusbar.core.LuminanceBenchmarkKt'
+}

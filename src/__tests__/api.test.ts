@@ -51,3 +51,15 @@ it('reads native diagnostic snapshots asynchronously', async () => {
     source: 'sample',
   });
 });
+
+it.each([null, [], { ios: null }, { ios: 'layer' }, { animation: 'false' }, { hysteresis: null }])(
+  'rejects malformed configure options %j without changing native or JS state',
+  options => {
+    bar.enable({ strategy: 'automatic' });
+    const before = bar.config;
+    expect(() => bar.configure(options)).toThrow(RangeError);
+    expect(mockNative.configure).not.toHaveBeenCalled();
+    expect(bar.config).toBe(before);
+    expect(bar.isEnabled).toBe(true);
+  },
+);

@@ -1,0 +1,102 @@
+{
+  "date": "2026-11-09",
+  "runtime": "Android ART (app_process)",
+  "api": 36,
+  "abi": "arm64-v8a",
+  "device": "emulator, not physical hardware",
+  "baseline": "f3d10de",
+  "seed": 20261109,
+  "width": 96,
+  "height": 8,
+  "buffers": 64,
+  "warmupSamplesPerPath": 160000,
+  "measuredSamplesPerRound": 100000,
+  "rounds": 9,
+  "scope": "Analyzer CPU only; excludes PixelCopy, scheduling and frame time",
+  "runs": [
+    {
+      "process": 1,
+      "baselineNsPerSample": [
+        951.82667,
+        945.80917,
+        940.84417,
+        945.16958,
+        944.89,
+        953.99667,
+        941.15916,
+        938.05334,
+        937.58875
+      ],
+      "weightedNsPerSample": [
+        568.16084,
+        562.69375,
+        576.11625,
+        565.365,
+        563.40417,
+        562.68833,
+        566.03334,
+        566.72458,
+        563.82458
+      ],
+      "baselineMedianNs": 944.89,
+      "weightedMedianNs": 565.365,
+      "reductionPercent": 40.16605107472827
+    },
+    {
+      "process": 2,
+      "baselineNsPerSample": [
+        979.85,
+        980.39208,
+        972.06417,
+        994.34833,
+        968.81959,
+        978.15,
+        976.70458,
+        980.70792,
+        979.75167
+      ],
+      "weightedNsPerSample": [
+        615.63542,
+        567.59041,
+        561.64042,
+        565.89291,
+        565.75334,
+        581.64542,
+        565.14209,
+        566.66958,
+        567.13501
+      ],
+      "baselineMedianNs": 979.75167,
+      "weightedMedianNs": 566.66958,
+      "reductionPercent": 42.1619174172982
+    },
+    {
+      "process": 3,
+      "baselineNsPerSample": [
+        963.78542,
+        954.37166,
+        960.65458,
+        949.50333,
+        950.74292,
+        946.97625,
+        947.68625,
+        953.01125,
+        950.33625
+      ],
+      "weightedNsPerSample": [
+        585.83458,
+        567.43833,
+        567.45792,
+        562.21417,
+        564.25958,
+        566.64625,
+        565.715,
+        565.25542,
+        567.63166
+      ],
+      "baselineMedianNs": 950.74292,
+      "weightedMedianNs": 566.64625,
+      "reductionPercent": 40.39963505592027
+    }
+  ]
+}

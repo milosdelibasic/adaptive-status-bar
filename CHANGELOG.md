@@ -1,52 +1,47 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 - Unreleased
 
-### Expo integration
+### Expo support
 
-- Add an Expo SDK 58 config plugin for controller-based iOS status-bar appearance, with installed-SDK validation.
-- Forward adaptive styles through React Native 0.88 public appearance state without replacing Expo root controllers or scene lifecycle hooks.
-- Keep Expo optional for bare React Native consumers and guard older React Native headers at compile time.
-- Preserve Android's existing native implementation through Expo autolinking, including production/R8 builds.
+- Add Expo SDK 58 / React Native 0.88 native development-build and prebuild support, with a packaged config plugin and installed-SDK validation.
+- Integrate with React Native's public iOS appearance state without replacing Expo root controllers, scene delegates, hidden-state APIs or development-client lifecycle.
+- Keep Expo optional for bare React Native users. Expo Go and web remain unsupported.
+
+### Android improvements
+
+- Add deterministic API 24–25 fallback using the window's Android UI mode, while preserving explicit fallback, override and hint precedence.
+- Refresh fallback on draw, focus, modal and lifecycle changes without unsupported pixel sampling or periodic polling.
+- Preserve honest unsupported-platform diagnostics and defer configuration appearance changes while paused.
+- Cache RGB channel weights in the luminance analyzer with bit-identical output. Paired Android ART microbenchmarks show lower analyzer-only time; this is not an application FPS or battery-life claim.
 
 ### iOS reliability
 
-- Restore adaptive appearance after another React Native writer changes shared style, without redundant root invalidations.
-- Prevent delayed cleanup from an old bridge from clearing a replacement controller's appearance.
+- Restore shared appearance after a competing React Native style write without redundant root invalidations.
+- Protect replacement controllers from delayed cleanup by an older bridge.
 - Avoid false external-write counts when UIKit reports an ambiguous default style around Expo development overlays.
+- Keep paused configuration changes inactive until resume and ignore already-queued sampling callbacks after sampling stops.
 
-### Tests and documentation
+### Configuration and unnecessary work
 
-- Add config-plugin and appearance-state regression tests to Library checks.
-- Add isolated Expo Android and iOS fixtures with recorded development-client and release-mode results.
-- Document SDK 58 setup, status-bar ownership, development overlays and the Expo Go/web limitations in README.
-
-## 0.1.6 - 2026-11-09
-
-### Android behavior
-
-- Add a deterministic API 24–25 fallback: dark icons in light UI mode and white icons in night mode when no explicit fallback is configured.
-- Preserve explicit fallback, override and eligible hint precedence without attempting unsupported PixelCopy sampling.
-- Refresh fallback appearance on window draw/focus and lifecycle events, including React Native modal transitions, without a sampling worker or periodic polling.
-- Report unsupported sampling honestly: `supported=false`, `sampling=false` and zero samples on API 24–25.
-- Prevent `configure()` from changing Android appearance while paused; apply the saved configuration on resume.
+- Reject malformed JavaScript configuration before native dispatch, using consistent RangeError errors and preserving current configuration on failed updates.
+- Preserve stored hints without restarting sampling when automatic mode ignores them or an override takes priority.
+- Retain the existing Swift luminance implementation after measurements showed no benefit from the proposed weighted-table optimization.
 
 ### Tests and CI
 
-- Add four Kotlin fallback tests, bringing the core suite to 28 tests.
-- Add an isolated RN 0.88.1 Android consumer that installs the npm-packed library and embeds its JS in both Debug and Release.
-- Port the 16 Skyvist image, scroll, modal and override-recovery checks into the consumer.
-- Add 14 API 24–25 fallback checks, including default theme, explicit style, hints, overrides and modal recovery.
-- Verify landscape, portrait and background/foreground recovery through app-observed events and native appearance checks.
-- Add an API 24/25/35/36 GitHub Actions matrix with screenshots, XML, logcat and JSON artifacts. Hosted results are tracked in VALIDATION.md.
+- Add exhaustive Android RGB parity checks, reproducible paired benchmarks and targeted native lifecycle regressions.
+- Add config-plugin, appearance-state and controller regression checks to CI.
+- Add an API 24/25/35/36 Android Debug/Release integration matrix with screenshots, accessibility XML, logcat and JSON artifacts.
+- Add isolated Expo Android and iOS fixtures covering sampling, overrides, modals, rotation, resume and development-client reloads.
 
 ### Documentation
 
-- Reorganize the README around installation, a complete root-owner example, overrides/hints, fallback behavior, configuration and troubleshooting.
-- Document Expo Go, web, native-window and capture limitations without implying untested compatibility.
-- Record local Debug/Release emulator results separately from physical-device and hosted-CI verification.
+- Rewrite README around installation, root ownership, Expo setup, overrides, fallback, configuration and troubleshooting.
+- Record measurements and test scope separately from untested physical-device, EAS and production-signing behavior.
+- Keep release notes grouped by feature and provide reproducible validation evidence.
 
-Physical Android hardware testing remains pending.
+Physical-device testing remains pending. Publication of 0.2.0 is pending npm authentication.
 
 ## 0.1.5
 

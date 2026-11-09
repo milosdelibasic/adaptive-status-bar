@@ -156,7 +156,10 @@ class AdaptiveStatusBarController(
   fun setHint(style: IconStyle?) {
     if (style == hint) return
     hint = style
-    if (enabled) restart()
+    // Retain the hint for a later strategy change, but automatic ignores it.
+    // An override also masks hints. Retain the newest hint for clearOverride().
+    // Restarting here would discard an in-flight copy and reset draw observers.
+    if (enabled && override == null && config.strategy != Strategy.AUTOMATIC) restart()
   }
 
   fun pause() {

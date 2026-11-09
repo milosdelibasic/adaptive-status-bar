@@ -18,9 +18,22 @@ class Measurement(var lightness: Float = 0f, var left: Float = 0f, var right: Fl
 object LuminanceAnalyzer {
   const val ZONE_FRACTION = 0.35f
 
-  private val linear = FloatArray(256) { i ->
+  private fun linearTable() = FloatArray(256) { i ->
     val c = i / 255f
     if (c <= 0.04045f) c / 12.92f else ((c + 0.055f) / 1.055f).pow(2.4f)
+  }
+
+  // Three channel weights are constant. Cache their exact Float products once instead
+  // of multiplying each of the 528 sampled pixels on every frame (2 KiB net).
+  private val red: FloatArray
+  private val green: FloatArray
+  private val blue: FloatArray
+
+  init {
+    val linear = linearTable()
+    red = FloatArray(256) { 0.2126f * linear[it] }
+    green = FloatArray(256) { 0.7152f * linear[it] }
+    blue = FloatArray(256) { 0.0722f * linear[it] }
   }
 
   /** `pixels` are ARGB ints, row major. Fills and returns `out` so nothing is allocated per sample. */
@@ -43,7 +56,7 @@ object LuminanceAnalyzer {
   }
 
   fun luminance(argb: Int): Float =
-    0.2126f * linear[(argb shr 16) and 0xFF] + 0.7152f * linear[(argb shr 8) and 0xFF] + 0.0722f * linear[argb and 0xFF]
+    red[(argb shr 16) and 0xFF] + green[(argb shr 8) and 0xFF] + blue[argb and 0xFF]
 
   /** Luminance where the worse of the two zones is equally readable with either icon color. */
   fun balanced(darkest: Float, brightest: Float): Float =

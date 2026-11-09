@@ -52,6 +52,24 @@ describe('toNativeConfig', () => {
     expect(() => toNativeConfig(bad as never)).toThrow(RangeError);
   });
 
+  it.each([
+    null,
+    [],
+    'automatic',
+    { animation: 'false' },
+    { animation: null },
+    { hysteresis: null },
+    { hysteresis: 'false' },
+    { hysteresis: [] },
+    { hysteresis: { darkThreshold: 0.4 } },
+    { hysteresis: { lightThreshold: 0.6 } },
+    { ios: null },
+    { ios: 'layer' },
+    { ios: [] },
+  ])('rejects malformed JavaScript configuration %j before native dispatch', bad => {
+    expect(() => toNativeConfig(bad as never)).toThrow(RangeError);
+  });
+
   it('allows idleInterval 0 to turn the fallback off', () => {
     expect(toNativeConfig({ idleInterval: 0 }).idleInterval).toBe(0);
   });

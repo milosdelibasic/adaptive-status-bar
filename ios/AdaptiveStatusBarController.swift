@@ -84,7 +84,7 @@ public final class AdaptiveStatusBarController {
   public func configure(_ next: ControllerConfig) {
     let restartNeeded = next.strategy != config.strategy || next.captureMethod != config.captureMethod
     apply(config: next)
-    guard enabled else { return }
+    guard enabled, !paused else { return }
     if restartNeeded { restart() } else { applyResolved(); publish() }
   }
 
@@ -97,7 +97,9 @@ public final class AdaptiveStatusBarController {
   public func setHint(_ style: IconStyle?) {
     guard style != hint else { return }
     hint = style
-    if enabled { restart() }
+    // Automatic mode ignores hints; an override also wins over them. Preserve
+    // sampling back-off and the decider instead of restarting unused work.
+    if enabled, config.strategy != .automatic, override == nil { restart() }
   }
 
   public func pause() {
@@ -128,6 +130,7 @@ public final class AdaptiveStatusBarController {
   }
 
   private func stop() {
+    ownWake = false
     timer?.schedule(deadline: .distantFuture)
     stopObserving()
     scheduler.reset()
@@ -195,7 +198,6 @@ public final class AdaptiveStatusBarController {
     let t = DispatchSource.makeTimerSource(queue: .main)
     t.setEventHandler { [weak self] in
       guard let self else { return }
-      self.ownWake = true
       self.sample()
     }
     t.schedule(deadline: .distantFuture)
@@ -205,6 +207,10 @@ public final class AdaptiveStatusBarController {
   }
 
   private func sample() {
+    // A dispatch timer event may already be queued when pause/disable/override
+    // disarms it. Do not capture or mutate appearance after sampling stopped.
+    guard enabled, !paused, needsSampling else { return }
+    ownWake = true
     let start = CACurrentMediaTime()
     scheduler.onTick(now: start)
     let result = sampler.capture(method: config.captureMethod)
