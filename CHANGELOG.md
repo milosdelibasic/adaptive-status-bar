@@ -1,6 +1,6 @@
 # Changelog
 
-## 0.2.0 - Unreleased
+## 0.2.0 - 2026-11-09
 
 ### Expo support
 
@@ -41,7 +41,7 @@
 - Record measurements and test scope separately from untested physical-device, EAS and production-signing behavior.
 - Keep release notes grouped by feature and provide reproducible validation evidence.
 
-Physical-device testing remains pending. Publication of 0.2.0 is pending npm authentication.
+Physical-device testing remains pending.
 
 ## 0.1.5
 

@@ -3,7 +3,7 @@
 ## 0.2.0 review and measured improvements, 2026-11-09
 
 The release combines the Android and Expo work below with a focused code review.
-Version 0.1.6 was not published; 0.2.0 publication is pending npm authentication.
+Version 0.1.6 was not published; its Android changes are included in 0.2.0.
 
 ### Measured changes
 
@@ -49,8 +49,8 @@ Version 0.1.6 was not published; 0.2.0 publication is pending npm authentication
   type checking and package dry-run passed on the final source.
 - Independent focused patch review found no blocking correctness regression.
   This was not a whole-library security audit.
-- Hosted CI for the combined 0.2.0 source is pending the next push. No
-  physical-device or app-wide performance claim is made.
+- Hosted CI passed for combined source commit `81495a2`: [Library checks](https://github.com/milosdelibasic/adaptive-status-bar/actions/runs/42635895089) and [Android integration](https://github.com/milosdelibasic/adaptive-status-bar/actions/runs/42635895118). API 24/25 Debug and Release passed 14 checks plus lifecycle per variant; API 35/36 passed 16 plus lifecycle per variant. The first API 36 attempt passed Debug but failed cleanup before Release; a single job rerun passed both variants, cleanup and artifact upload with no source changes. The original cleanup failure's cause was not established.
+- No physical-device or app-wide performance claim is made.
 
 ---
 
@@ -117,8 +117,9 @@ it was never published. The combined release is now prepared as 0.2.0.
 
 - No physical device, EAS cloud build, Expo Router-specific navigator fixture,
   Expo Go, web or other Expo SDK was tested.
-- Expo changes have not been pushed or run in hosted CI. The local plugin and
-  appearance tests are wired into Library checks for the next pushed commit.
+- The combined source subsequently passed hosted Library checks and the bare-RN
+  Android matrix, as recorded above. Expo device/runtime fixtures were run locally;
+  they are not a hosted Expo or EAS build matrix.
 - This is not a production-signed Skyvist release or a performance certification.
 
 ---

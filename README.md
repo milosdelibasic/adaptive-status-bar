@@ -4,7 +4,7 @@ Keep status-bar icons readable as images, screens and scroll positions change. A
 
 Built for React Native's **New Architecture**. No Expo runtime or Expo Modules dependency.
 
-> **Prepared for 0.2.0:** Expo SDK 58 native support, theme-based Android 7 fallback and Android integration CI. Publication is pending. See [release notes](CHANGELOG.md#020---unreleased) and [verification results](VALIDATION.md).
+> **New in 0.2.0:** Expo SDK 58 native support, theme-based Android 7 fallback and Android integration CI. See [release notes](CHANGELOG.md#020---2026-11-09) and [verification results](VALIDATION.md).
 
 ## Contents
 
@@ -29,14 +29,14 @@ Built for React Native's **New Architecture**. No Expo runtime or Expo Modules d
 | Android 7 / API 24–25 | Fallback, hints and overrides; no pixel sampling |
 | iOS | iOS 15.1+; Xcode 26+ for the typed Liquid Glass sampler |
 | Expo Go | Unsupported: the native module is not included in Expo Go |
-| Expo development builds | SDK 58 / RN 0.88 native integration verified; unreleased, see limits below |
+| Expo development builds | SDK 58 / RN 0.88 native integration verified; see limits below |
 | Web | Unsupported; importing the package requires its native TurboModule |
 
 Your application's React Native version and build tools may impose higher platform requirements. A compatible peer dependency is not a promise that every future RN release has been tested.
 
 ## Install
 
-After 0.2.0 is published, install the package and commit your lockfile. Until then, use a local npm-packed archive from this branch:
+Install the package and commit your lockfile:
 
 ```sh
 npm install --save-exact @skyvist/adaptive-status-bar@0.2.0
@@ -83,8 +83,8 @@ The npm package includes TypeScript source for Metro and native source for autol
 
 ## Expo SDK 58
 
-Expo support is currently **unreleased**, targeting SDK 58 and React Native 0.88.
-Use a local tarball built from this branch until a release includes these changes.
+Expo native development-build support is included in **0.2.0**, targeting SDK 58
+and React Native 0.88.
 SDK 57 and older are not supported by this integration. Expo Go is not supported.
 
 Install the package and `expo-dev-client`, then add the config plugin:
