@@ -44,6 +44,7 @@ public final class AdaptiveStatusBarController {
   private var timer: DispatchSourceTimer?
   /// Our own tick wakes the run loop too, that wake-up isn't app activity.
   private var ownWake = false
+  private let appearanceOwner = UUID()
   private var applied: IconStyle?
   private var appliedSource = "none"
 
@@ -62,6 +63,7 @@ public final class AdaptiveStatusBarController {
   }
 
   public func enable(_ next: ControllerConfig) {
+    AdaptiveStatusBarAppearance.claim(appearanceOwner)
     apply(config: next)
     enabled = true
     restart()
@@ -73,7 +75,7 @@ public final class AdaptiveStatusBarController {
     sampler.release()
     timer?.cancel()
     timer = nil
-    AdaptiveStatusBarAppearance.clear()
+    AdaptiveStatusBarAppearance.clear(owner: appearanceOwner)
     applied = nil
     appliedSource = "none"
     publish()
@@ -238,8 +240,10 @@ public final class AdaptiveStatusBarController {
     let target: UIStatusBarStyle = style == .light ? .lightContent : .darkContent
     let current = StatusBarSampler.activeScene()?.statusBarManager?.statusBarStyle
     if current != target {
-      if applied == style { stats.externalWrites += 1 }
-      AdaptiveStatusBarAppearance.apply(target, animated: config.animated)
+      if applied == style, AdaptiveStatusBarAppearance.isExplicitMismatch(current, target: target) {
+        stats.externalWrites += 1
+      }
+      AdaptiveStatusBarAppearance.apply(target, animated: config.animated, owner: appearanceOwner)
     }
     if applied != style || appliedSource != source {
       applied = style

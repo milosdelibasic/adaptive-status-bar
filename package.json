@@ -1,7 +1,7 @@
 {
   "name": "@skyvist/adaptive-status-bar",
   "version": "0.1.6",
-  "description": "Native adaptive status bar for React Native, without Expo.",
+  "description": "Native adaptive status bar for React Native and Expo development builds.",
   "main": "src/index.ts",
   "react-native": "src/index.ts",
   "types": "src/index.ts",
@@ -10,7 +10,8 @@
   "homepage": "https://github.com/milosdelibasic/adaptive-status-bar#readme",
   "peerDependencies": {
     "react": "*",
-    "react-native": ">=0.86.0"
+    "react-native": ">=0.86.0",
+    "expo": ">=58.0.0 <59.0.0"
   },
   "codegenConfig": {
     "name": "SkyvistAdaptiveStatusBarSpec",
@@ -48,7 +49,8 @@
     "NOTICE",
     "README.md",
     "CHANGELOG.md",
-    "VALIDATION.md"
+    "VALIDATION.md",
+    "app.plugin.js"
   ],
   "scripts": {
     "test": "jest --runInBand --watchman=false",
@@ -56,7 +58,8 @@
     "test:ios": "sh scripts/test-ios-core.sh",
     "test:android": "sh scripts/test-android-core.sh",
     "test:android:integration": "sh scripts/test-android-integration.sh",
-    "test:spm": "sh scripts/test-ios-spm.sh"
+    "test:spm": "sh scripts/test-ios-spm.sh",
+    "test:expo": "node --test tests/expo-plugin.test.cjs"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",
@@ -77,5 +80,10 @@
   "swiftpmConfig": {
     "name": "SkyvistAdaptiveStatusBar",
     "scaffold": false
+  },
+  "peerDependenciesMeta": {
+    "expo": {
+      "optional": true
+    }
   }
 }

@@ -1,5 +1,26 @@
 # Changelog
 
+## Unreleased
+
+### Expo integration
+
+- Add an Expo SDK 58 config plugin for controller-based iOS status-bar appearance, with installed-SDK validation.
+- Forward adaptive styles through React Native 0.88 public appearance state without replacing Expo root controllers or scene lifecycle hooks.
+- Keep Expo optional for bare React Native consumers and guard older React Native headers at compile time.
+- Preserve Android's existing native implementation through Expo autolinking, including production/R8 builds.
+
+### iOS reliability
+
+- Restore adaptive appearance after another React Native writer changes shared style, without redundant root invalidations.
+- Prevent delayed cleanup from an old bridge from clearing a replacement controller's appearance.
+- Avoid false external-write counts when UIKit reports an ambiguous default style around Expo development overlays.
+
+### Tests and documentation
+
+- Add config-plugin and appearance-state regression tests to Library checks.
+- Add isolated Expo Android and iOS fixtures with recorded development-client and release-mode results.
+- Document SDK 58 setup, status-bar ownership, development overlays and the Expo Go/web limitations in README.
+
 ## 0.1.6 - 2026-11-09
 
 ### Android behavior

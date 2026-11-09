@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "ASB Expo Android Tests",
+    "slug": "asb-expo-android",
+    "scheme": "asb-expo-android",
+    "version": "1.0.0",
+    "android": {
+      "package": "com.skyvist.asbexpoandroid"
+    },
+    "plugins": [
+      [
+        "expo-dev-client",
+        {
+          "launchMode": "most-recent"
+        }
+      ],
+      "@skyvist/adaptive-status-bar"
+    ]
+  }
+}

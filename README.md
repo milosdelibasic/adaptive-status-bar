@@ -10,6 +10,7 @@ Built for React Native's **New Architecture**. No Expo runtime or Expo Modules d
 
 - [Requirements](#requirements)
 - [Install](#install)
+- [Expo SDK 58](#expo-sdk-58)
 - [Enable once at the root](#enable-once-at-the-root)
 - [Screen overrides and hints](#screen-overrides-and-hints)
 - [Android 7 fallback](#android-7-fallback)
@@ -28,7 +29,7 @@ Built for React Native's **New Architecture**. No Expo runtime or Expo Modules d
 | Android 7 / API 24–25 | Fallback, hints and overrides; no pixel sampling |
 | iOS | iOS 15.1+; Xcode 26+ for the typed Liquid Glass sampler |
 | Expo Go | Unsupported: the native module is not included in Expo Go |
-| Expo development builds | Not validated; iOS needs the controller setup below; no config plugin is provided |
+| Expo development builds | SDK 58 / RN 0.88 native integration verified; unreleased, see limits below |
 | Web | Unsupported; importing the package requires its native TurboModule |
 
 Your application's React Native version and build tools may impose higher platform requirements. A compatible peer dependency is not a promise that every future RN release has been tested.
@@ -79,6 +80,57 @@ final class ReactNativeDelegate: RCTDefaultReactNativeFactoryDelegate {
 Keep your delegate's other methods and app setup. Rebuild the native app. Hot reload alone cannot install the module or change the root controller.
 
 The npm package includes TypeScript source for Metro and native source for autolinking/codegen. It has no install/prepare hook and does not need its own development dependencies in a consuming app.
+
+## Expo SDK 58
+
+Expo support is currently **unreleased**, targeting SDK 58 and React Native 0.88.
+Use a local tarball built from this branch until a release includes these changes.
+SDK 57 and older are not supported by this integration. Expo Go is not supported.
+
+Install the package and `expo-dev-client`, then add the config plugin:
+
+```json
+{
+  "expo": {
+    "plugins": ["@skyvist/adaptive-status-bar"]
+  }
+}
+```
+
+Generate/rebuild your native application:
+
+```sh
+npx expo prebuild
+npx expo run:ios
+# or:
+npx expo run:android
+```
+
+Commit or back up existing native edits before running prebuild. Existing native
+projects can run the plugin through their normal prebuild workflow; do not use
+`--clean` unless you intend to regenerate those native directories.
+
+**Do not apply the bare React Native root-controller replacement above to Expo.**
+The plugin enables controller-based appearance in Info.plist. The native adapter
+uses React Native 0.88's public appearance state, which Expo's own root controller
+already reads. AppDelegate, SceneDelegate, Expo handlers, hidden status-bar state
+and development-client mounting are left intact. Android uses normal Expo native
+autolinking and requires no library-specific MainActivity edits.
+
+Use the same root enable/disable API below. Remove competing `expo-status-bar`,
+React Native `StatusBar` components and navigator style overrides. A custom root
+controller or modal that owns its own status-bar style may need app-specific
+integration. Web imports remain unsupported, so isolate this module from web entry
+points rather than importing it unconditionally.
+
+With Expo's floating development-menu button visible, UIKit can report the
+symbolic default style instead of an explicit light/dark style. In that case
+`observedStyle` may be absent; this is not counted as a confirmed external write.
+The app window is still sampled. The development menu itself owns its overlay
+while open, so assess app colors after closing it.
+
+Validation is tracked in [VALIDATION.md](VALIDATION.md). Prebuild/autolinking
+success alone does not prove simulator, device or release-build behavior.
 
 ## Enable once at the root
 
