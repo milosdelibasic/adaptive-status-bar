@@ -4,10 +4,9 @@ public enum Strategy: String {
   case automatic, hybrid, manual
 }
 
-/// `layer` renders the window's layer tree on the CPU. `hierarchy` asks UIKit for the on-screen
-/// snapshot, which includes blur views but costs more. See the README's iOS notes.
+/// Automatic capture uses the cheap layer strip unless visible GPU content needs UIKit capture.
 public enum CaptureMethod: String {
-  case layer, hierarchy
+  case automatic, layer, hierarchy
 }
 
 public struct ControllerConfig {
@@ -17,7 +16,7 @@ public struct ControllerConfig {
   /// Used when nothing else decides: manual mode with no hint, or sampling unsupported.
   public var fallback: IconStyle?
   public var animated = true
-  public var captureMethod: CaptureMethod = .layer
+  public var captureMethod: CaptureMethod = .automatic
 
   public init() {}
 }
@@ -283,6 +282,7 @@ public final class AdaptiveStatusBarController {
     s["source"] = appliedSource
     s["intervalMs"] = scheduler.interval * 1000
     s["strategy"] = config.strategy.rawValue
+    s["iosCaptureMethod"] = sampler.lastCaptureMethod?.rawValue
     lock.lock()
     published = s
     lock.unlock()

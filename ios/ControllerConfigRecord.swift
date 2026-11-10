@@ -35,7 +35,7 @@ struct ConfigRecord: Decodable {
     c.decider = d
     c.fallback = fallbackStyle.flatMap(IconStyle.init(rawValue:))
     c.animated = animation
-    c.captureMethod = iosCaptureMethod.flatMap(CaptureMethod.init(rawValue:)) ?? .layer
+    c.captureMethod = iosCaptureMethod.flatMap(CaptureMethod.init(rawValue:)) ?? .automatic
     try c.sampling.validate()
     try d.validate()
     return c

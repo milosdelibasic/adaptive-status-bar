@@ -179,3 +179,13 @@ React Native 0.86 / New Architecture, without Expo runtime.
 - Integration checks compared sampled style, system-reported style, pixel lightness and capture failures. Screenshots confirmed the displayed icon contrast.
 
 This is functional validation on simulators/emulators, not physical-device or release performance certification. The integration harness belongs to the consuming application and is not required to install this library. Refer to README for limitations around native SDK windows, Android API 24–25, SurfaceView video and iOS camera/Metal/Skia layers.
+
+
+## 0.2.1 automatic GPU capture - 2026-11-10
+
+- 48 JavaScript checks, TypeScript, 24 Swift core tests, controller lifecycle checks and 13 native iOS strip-selection checks passed.
+- RN 0.88.1 CocoaPods Debug build succeeded on iPhone 17 Pro / iOS 27. Skyvist used its unchanged automatic configuration, without per-screen capture settings or icon overrides.
+- Discover selected layer capture and dark icons (lightness 0.937). Mapbox globe selected hierarchy capture and light icons over dark space (0.073). Mercator selected dark icons over the bright map (0.758). Returning to Discover restored layer capture. Native diagnostics reported source sample and zero capture failures.
+- Repeated Map/Globe/Mercator/Memories/Discover transitions completed without a crash. A 30-second simulator recording includes first map loading, so its CPU and memory totals are not a before/after performance comparison or evidence of a memory leak. Display FPS is unavailable on this simulator.
+- Hierarchy capture has a higher per-sample cost and is selected only when GPU content can contribute beneath the status bar. Explicit layer/hierarchy modes remain available.
+- Physical-device and protected camera/video capture are not certified by these checks.

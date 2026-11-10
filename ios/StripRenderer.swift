@@ -9,6 +9,39 @@ import UIKit
 /// Layers that don't touch the strip cost only transform math. Graphics state is saved only
 /// around actual drawing, clipping and group opacity.
 enum StripRenderer {
+  /// Core Animation CPU rendering omits Metal/OpenGL pixels. Use the same visibility,
+  /// clipping and opaque-sibling rules as strip rendering before asking UIKit for those pixels.
+  static func requiresHierarchy(_ root: CALayer, strip: CGRect) -> Bool {
+    requiresHierarchy(root, toRoot: .identity, strip: strip)
+  }
+
+  private static func requiresHierarchy(_ layer: CALayer, toRoot: CGAffineTransform, strip: CGRect) -> Bool {
+    guard visible(layer) else { return false }
+    let hits = layer.bounds.applying(toRoot).intersects(strip)
+    let children = layer.sublayers ?? []
+    if !hits && (layer.masksToBounds || children.isEmpty) { return false }
+    if hits && isGPUBacked(layer) { return true }
+    if !CATransform3DIsIdentity(layer.sublayerTransform) && containsGPUContent(layer) { return true }
+    for child in visibleSublayers(children, toRoot: toRoot, strip: strip) {
+      guard visible(child) else { continue }
+      guard let transform = toParent(child) else {
+        // CPU strip rendering cannot flatten a 3D-transformed GPU surface.
+        if containsGPUContent(child) { return true }
+        continue
+      }
+      if requiresHierarchy(child, toRoot: transform.concatenating(toRoot), strip: strip) { return true }
+    }
+    return false
+  }
+
+  private static func containsGPUContent(_ layer: CALayer) -> Bool {
+    visible(layer) && (isGPUBacked(layer) || (layer.sublayers ?? []).contains(where: containsGPUContent))
+  }
+
+  private static func isGPUBacked(_ layer: CALayer) -> Bool {
+    layer is CAMetalLayer || NSStringFromClass(type(of: layer)).hasPrefix("CAEAGL")
+  }
+
   /// `ctx`'s transform must map `root`'s coordinates to the bitmap.
   static func render(_ root: CALayer, strip: CGRect, in ctx: CGContext) {
     draw(root, toRoot: .identity, strip: strip, ctx: ctx)
@@ -99,8 +132,15 @@ enum StripRenderer {
   }
 
   private static func drawSublayers(_ sublayers: [CALayer], toRoot: CGAffineTransform, strip: CGRect, ctx: CGContext) {
+    for child in visibleSublayers(sublayers, toRoot: toRoot, strip: strip) {
+      guard visible(child), let t = toParent(child) else { continue }
+      draw(child, toRoot: t.concatenating(toRoot), strip: strip, ctx: ctx)
+    }
+  }
+
+  private static func visibleSublayers(_ sublayers: [CALayer], toRoot: CGAffineTransform, strip: CGRect) -> ArraySlice<CALayer> {
     // React Native maps zIndex to zPosition. Stable sort keeps array order for equal values.
-    guard !sublayers.isEmpty else { return }
+    guard !sublayers.isEmpty else { return sublayers[...] }
     var ordered = sublayers
     if sublayers.contains(where: { $0.zPosition != 0 }) {
       ordered = sublayers.enumerated()
@@ -115,11 +155,7 @@ enum StripRenderer {
         break
       }
     }
-    for i in first..<ordered.count {
-      let child = ordered[i]
-      guard visible(child), let t = toParent(child) else { continue }
-      draw(child, toRoot: t.concatenating(toRoot), strip: strip, ctx: ctx)
-    }
+    return ordered[first...]
   }
 
   private static func shape(_ layer: CALayer, _ bounds: CGRect) -> CGPath {

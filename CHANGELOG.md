@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.2.1 - 2026-11-10
+
+- Make GPU-aware capture the iOS default: visible Metal/OpenGL beneath the status bar selects UIKit hierarchy capture automatically; ordinary UI retains cheap layer strip capture.
+- Respect clipping, visibility, transforms, opaque overlays and React Native zIndex when deciding whether GPU capture is needed.
+- Expose the last successful capture path through `getStats().iosCaptureMethod` and skip incomplete UIKit captures instead of analyzing empty pixels.
+- Add native simulator regression checks for capture selection and keep explicit `layer` and `hierarchy` modes available.
+
 ## 0.2.0 - 2026-11-09
 
 ### Expo support

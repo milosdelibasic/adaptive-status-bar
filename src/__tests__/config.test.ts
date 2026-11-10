@@ -26,11 +26,14 @@ describe('toNativeConfig', () => {
     expect(toNativeConfig({ hysteresis: false }).hysteresis).toBe(false);
   });
 
-  it('passes the iOS capture method', () => {
-    expect(
-      toNativeConfig({ ios: { captureMethod: 'hierarchy' } }).iosCaptureMethod,
-    ).toBe('hierarchy');
-  });
+  it.each(['automatic', 'layer', 'hierarchy'] as const)(
+    'passes the iOS %s capture method',
+    captureMethod => {
+      expect(
+        toNativeConfig({ ios: { captureMethod } }).iosCaptureMethod,
+      ).toBe(captureMethod);
+    },
+  );
 
   it.each([
     [{ strategy: 'magic' }],

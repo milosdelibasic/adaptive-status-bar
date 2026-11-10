@@ -109,7 +109,7 @@ export const toNativeConfig = (
   }
   if (
     ios?.captureMethod !== undefined &&
-    !['layer', 'hierarchy'].includes(ios.captureMethod)
+    !['automatic', 'layer', 'hierarchy'].includes(ios.captureMethod)
   ) {
     fail(`unknown ios.captureMethod "${ios.captureMethod}"`);
   }

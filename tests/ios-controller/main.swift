@@ -1,6 +1,7 @@
 import Foundation
 
 var config = ControllerConfig()
+precondition(config.captureMethod == .automatic, "GPU-aware capture must be the default")
 config.strategy = .manual
 config.fallback = .dark
 let controller = AdaptiveStatusBarController()

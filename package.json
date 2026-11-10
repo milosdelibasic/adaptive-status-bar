@@ -1,6 +1,6 @@
 {
   "name": "@skyvist/adaptive-status-bar",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Native adaptive status bar for React Native and Expo development builds.",
   "main": "src/index.ts",
   "react-native": "src/index.ts",

@@ -16,6 +16,7 @@ final class StatusBarSampler {
  static let scene = Scene()
  static func activeScene() -> Scene? { scene }
  func release() {}
+ var lastCaptureMethod: CaptureMethod? = .layer
  func capture(method: CaptureMethod) -> SampleResult { Self.captures += 1; return .measured(Measurement(lightness: 1,left:1,right:1),captureTime:0,analysisTime:0) }
 }
 enum AdaptiveStatusBarAppearance {

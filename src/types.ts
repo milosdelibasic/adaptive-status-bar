@@ -54,10 +54,10 @@ export type AdaptiveStatusBarConfig = {
   fallbackStyle?: IconStyle;
   ios?: {
     /**
-     * `layer` (default) renders the window's layers into a tiny bitmap. `hierarchy` uses UIKit's
-     * on-screen snapshot, which also sees blur views but costs more per sample.
+     * `automatic` (default) uses cheap layer capture, switching to UIKit hierarchy capture
+     * when a visible Metal/OpenGL surface intersects the status bar. Explicit modes remain available.
      */
-    captureMethod?: 'layer' | 'hierarchy';
+    captureMethod?: 'automatic' | 'layer' | 'hierarchy';
   };
 };
 
@@ -72,6 +72,8 @@ export type StyleChangeEvent = {
 
 /** Diagnostics. Counters are cumulative since the module loaded or the last `resetStats()`. */
 export type AdaptiveStatusBarStats = {
+  /** Last successful capture path on iOS. Absent on Android, null before the first sample. */
+  iosCaptureMethod?: 'layer' | 'hierarchy' | null;
   /**
    * Whether the platform supports automatic sampling and appearance control.
    * False on Android API 24–25,
@@ -94,7 +96,7 @@ export type AdaptiveStatusBarStats = {
   intervalMs: number;
   samples: number;
   failures: number;
-  /** Ticks skipped because the status bar was hidden or there was no window. */
+  /** Ticks skipped for a hidden status bar, missing window, or incomplete UIKit capture. */
   skipped: number;
   styleChanges: number;
   /** Times something else changed the status bar style and it was put back. */

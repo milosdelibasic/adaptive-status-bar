@@ -243,7 +243,7 @@ Set `idleInterval: 0` to disable idle polling, including with `responsive`.
 | `minTransitionInterval` | `250` | Minimum interval between switches, ms |
 | `animation` | `true` | iOS appearance animation; Android switches immediately |
 | `fallbackStyle` | See below | Used when no higher-priority decision exists |
-| `ios.captureMethod` | `layer` | `hierarchy` captures UIKit effects at higher cost |
+| `ios.captureMethod` | `automatic` | Layer capture for ordinary UI; UIKit hierarchy capture when visible Metal/OpenGL intersects the status bar. `layer` and `hierarchy` remain explicit options. |
 
 Default hysteresis thresholds are `darkThreshold: 0.42` and `lightThreshold: 0.58` on the normalized CIE lightness scale. Use `false` to switch at the midpoint or pass both custom thresholds.
 
@@ -295,7 +295,8 @@ The root controller implements `preferredStatusBarStyle` and requests appearance
 
 - Standard transparent React Native modals are sampled in the same window.
 - Full-screen native SDK controllers must manage or forward their own status-bar appearance.
-- Camera, Metal/Skia and video layers cannot be reliably sampled with Core Animation; use an override.
+- Automatic capture detects visible Metal/OpenGL surfaces beneath the status bar, including Mapbox and Skia, and switches to UIKit hierarchy capture. It returns to cheap layer capture when those surfaces leave, become hidden, or are covered by opaque UI. No screen-specific hint or override is required. `getStats().iosCaptureMethod` reports the last successful capture path.
+- Protected camera/video surfaces may remain unavailable to UIKit capture; explicit overrides remain available for content the system cannot capture.
 - Blur approximation has limits. `ios.captureMethod: 'hierarchy'` may improve results at a higher rendering cost.
 
 ## Testing and CI

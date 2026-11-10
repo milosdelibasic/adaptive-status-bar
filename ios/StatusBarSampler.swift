@@ -5,16 +5,16 @@ enum SampleResult {
   case skipped
 }
 
-/// Renders only the status bar strip of the key window into a tiny reused bitmap. No screen
-/// capture API exists on iOS, so this draws the app's own layers: video layers, Metal and OpenGL
-/// content come out empty with the `layer` method. The status bar itself lives in another
-/// process and is never part of the capture.
+/// Samples the app beneath the status bar into a tiny reused bitmap. Automatic capture uses
+/// layer rendering for ordinary UI and UIKit hierarchy capture for visible Metal/OpenGL.
+/// The status bar itself lives in another process and is never part of the capture.
 final class StatusBarSampler {
   static let width = 96
   static let height = 8
 
   private var buffer: UnsafeMutablePointer<UInt8>?
   private var context: CGContext?
+  private(set) var lastCaptureMethod: CaptureMethod?
 
   deinit { release() }
 
@@ -22,6 +22,7 @@ final class StatusBarSampler {
     context = nil
     buffer?.deallocate()
     buffer = nil
+    lastCaptureMethod = nil
   }
 
   func capture(method: CaptureMethod) -> SampleResult {
@@ -47,15 +48,21 @@ final class StatusBarSampler {
     // Nearest neighbour reads only the pixels it needs. Smoother filters resample the whole source
     // image first, which cost ~9 ms for a full-screen photo.
     ctx.interpolationQuality = .none
-    switch method {
-    case .layer:
-      StripRenderer.render(window.layer.presentation() ?? window.layer, strip: frame, in: ctx)
-    case .hierarchy:
+    let root = window.layer.presentation() ?? window.layer
+    let useHierarchy = method == .hierarchy ||
+      (method == .automatic && StripRenderer.requiresHierarchy(root, strip: frame))
+    let complete: Bool
+    if useHierarchy {
       UIGraphicsPushContext(ctx)
-      window.drawHierarchy(in: window.bounds, afterScreenUpdates: false)
+      complete = window.drawHierarchy(in: window.bounds, afterScreenUpdates: false)
       UIGraphicsPopContext()
+    } else {
+      StripRenderer.render(root, strip: frame, in: ctx)
+      complete = true
     }
     ctx.restoreGState()
+    guard complete else { return .skipped }
+    lastCaptureMethod = useHierarchy ? .hierarchy : .layer
     let captured = CACurrentMediaTime()
     let m = LuminanceAnalyzer.analyze(pixels, width: Self.width, height: Self.height, bytesPerRow: Self.width * 4)
     return .measured(m, captureTime: captured - start, analysisTime: CACurrentMediaTime() - captured)
