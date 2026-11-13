@@ -5,6 +5,8 @@
 #endif
 #if SKYVIST_SPM
 #import "SPM/SkyvistAdaptiveStatusBarImplementation.h"
+#elif __has_include(<SkyvistAdaptiveStatusBar/SkyvistAdaptiveStatusBar-Swift.h>)
+#import <SkyvistAdaptiveStatusBar/SkyvistAdaptiveStatusBar-Swift.h>
 #else
 #import "SkyvistAdaptiveStatusBar-Swift.h"
 #endif
