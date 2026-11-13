@@ -348,3 +348,7 @@ Pin the npm version and commit the lockfile. For CocoaPods, run `npm ci` before 
 ## Credits and license
 
 Adapted from [rbayuokt/expo-adaptive-status-bar](https://github.com/rbayuokt/expo-adaptive-status-bar), commit `151fdc6b8c9ff172a95fab6ece65c6814c19d9bd` (0.1.2). The upstream MIT copyright/license, contrast analysis, scheduling and hysteresis are retained. This project maintains the platform adapters and React Native integration. See [LICENSE](LICENSE) and [NOTICE](NOTICE).
+
+### iOS framework compatibility
+
+Version 0.2.2 resolves the generated Swift header through the framework module when using CocoaPods dynamic frameworks, including Firebase SPM consumers. Static CocoaPods linkage retains the local-header fallback, and the SPM implementation path is unchanged. No consumer Podfile header-search override is needed.
